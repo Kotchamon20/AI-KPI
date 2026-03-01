@@ -126,12 +126,25 @@ CREATE POLICY "Admins view all branch kpi" ON public.branch_kpi FOR SELECT USING
     EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND role = 'admin')
 );
 
+-- Enable RLS on all tables
+ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.daily_sales ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.product_sales ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.marketing_kpi ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.staff_kpi ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.branch_kpi ENABLE ROW LEVEL SECURITY;
+
 -- Functions & Triggers for User Creation
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
     INSERT INTO public.users (id, name, role, branch)
-    VALUES (NEW.id, NEW.raw_user_meta_data->>'name', (NEW.raw_user_meta_data->>'role')::user_role, NEW.raw_user_meta_data->>'branch');
+    VALUES (
+        NEW.id, 
+        COALESCE(NEW.raw_user_meta_data->>'name', split_part(NEW.email, '@', 1), 'Admin'), 
+        COALESCE((NEW.raw_user_meta_data->>'role')::user_role, 'admin'), 
+        NEW.raw_user_meta_data->>'branch'
+    );
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
