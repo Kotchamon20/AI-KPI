@@ -2,10 +2,7 @@ import React, { useState } from 'react';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import { Coffee, Loader2, Play, AlertTriangle } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useAuth } from '../contexts/AuthContext';
-
 export default function Login() {
-  const { enterDemoMode } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -33,7 +30,7 @@ export default function Login() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-coffee-100 p-4">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="max-w-md w-full glass-card p-8"
@@ -46,15 +43,7 @@ export default function Login() {
           <p className="text-coffee-600 mt-2">ระบบจัดการ KPI ร้านกาแฟ</p>
         </div>
 
-        {!isSupabaseConfigured && (
-          <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-xl flex gap-3 items-start">
-            <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
-            <div className="text-xs text-amber-800">
-              <p className="font-bold mb-1">ยังไม่ได้เชื่อมต่อ Supabase</p>
-              <p>การเข้าสู่ระบบถูกปิดใช้งานจนกว่าคุณจะตั้งค่าโปรเจกต์ Supabase โปรดใช้โหมดทดลองเพื่อสำรวจแอป</p>
-            </div>
-          </div>
-        )}
+
 
         <form onSubmit={handleLogin} className="space-y-4">
           {error && (
@@ -62,7 +51,7 @@ export default function Login() {
               {error}
             </div>
           )}
-          
+
           <div>
             <label className="block text-sm font-medium text-coffee-800 mb-1">อีเมล</label>
             <input
@@ -98,22 +87,6 @@ export default function Login() {
           </button>
         </form>
 
-        <div className="relative my-8">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-coffee-200"></div>
-          </div>
-          <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-white text-coffee-400">หรือดำเนินการต่อด้วย</span>
-          </div>
-        </div>
-
-        <button
-          onClick={enterDemoMode}
-          className="w-full bg-white border border-coffee-200 text-coffee-700 py-3 rounded-xl font-semibold hover:bg-coffee-50 transition-all flex items-center justify-center gap-2"
-        >
-          <Play className="w-4 h-4 fill-current" />
-          ทดลองใช้งาน (Demo Mode)
-        </button>
 
         <div className="mt-8 text-center text-sm text-coffee-500">
           <p>ติดต่อผู้ดูแลระบบเพื่อขอสิทธิ์เข้าใช้งาน</p>
