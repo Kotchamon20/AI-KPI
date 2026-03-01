@@ -87,8 +87,16 @@ CREATE TABLE public.branch_kpi (
 -- RLS Policies
 
 -- Users: Admins can see all, users can see themselves
+CREATE OR REPLACE FUNCTION public.get_my_role()
+RETURNS text
+LANGUAGE sql
+SECURITY DEFINER
+AS $$
+  SELECT role::text FROM public.users WHERE id = auth.uid();
+$$;
+
 CREATE POLICY "Admins can view all users" ON public.users FOR SELECT USING (
-    EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND role = 'admin')
+    public.get_my_role() = 'admin'
 );
 CREATE POLICY "Users can view own profile" ON public.users FOR SELECT USING (auth.uid() = id);
 

@@ -1,11 +1,11 @@
 import React from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { 
-  LayoutDashboard, 
-  BarChart3, 
-  Users, 
-  Settings, 
-  LogOut, 
+import {
+  LayoutDashboard,
+  BarChart3,
+  Users,
+  Settings,
+  LogOut,
   Coffee,
   Menu,
   X,
@@ -19,7 +19,7 @@ import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const { profile, signOut, isDemo } = useAuth();
+  const { profile, signOut } = useAuth();
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
 
@@ -43,9 +43,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </div>
             <span className="text-xl font-serif font-bold text-coffee-900">BrewMetrics</span>
           </div>
-          {isDemo && (
-            <span className="px-2 py-1 bg-amber-100 text-amber-700 text-[10px] font-bold rounded uppercase tracking-wider">Demo</span>
-          )}
+          {/* Removed demo badge */}
         </div>
 
         <nav className="flex-1 px-4 space-y-1 mt-4">
@@ -57,8 +55,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 to={item.href}
                 className={cn(
                   "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all",
-                  isActive 
-                    ? "bg-coffee-100 text-coffee-900 shadow-sm" 
+                  isActive
+                    ? "bg-coffee-100 text-coffee-900 shadow-sm"
                     : "text-coffee-500 hover:bg-coffee-50 hover:text-coffee-700"
                 )}
               >
@@ -96,7 +94,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <Coffee className="text-coffee-700 w-6 h-6" />
             <span className="font-serif font-bold text-coffee-900">BrewMetrics</span>
           </div>
-          <button 
+          <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="p-2 text-coffee-600"
           >
