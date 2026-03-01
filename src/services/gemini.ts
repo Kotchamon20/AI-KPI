@@ -1,6 +1,13 @@
 import { GoogleGenAI } from "@google/genai";
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
+let ai: GoogleGenAI | null = null;
+try {
+  if (process.env.GEMINI_API_KEY) {
+    ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+  }
+} catch (e) {
+  console.warn("Gemini disabled: Invalid or missing API key.");
+}
 
 // Simple cache to avoid redundant calls within the same session
 const insightCache: Record<string, { result: string; timestamp: number }> = {};
@@ -30,7 +37,7 @@ export async function analyzeDashboardData(data: any, context: string) {
   const apiKey = process.env.GEMINI_API_KEY || "";
 
   // 1. Try Gemini if API key is present
-  if (apiKey) {
+  if (apiKey && ai) {
     let retries = 0;
     const maxRetries = 2;
     let delay = 2000;
