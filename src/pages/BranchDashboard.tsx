@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
-import { 
-  Building2, 
-  TrendingUp, 
-  Users, 
-  Moon, 
-  Maximize, 
+import {
+  Building2,
+  TrendingUp,
+  Users,
+  Moon,
+  Maximize,
   ArrowRight,
   BarChart3,
   PieChart as PieChartIcon,
@@ -14,13 +14,13 @@ import {
   Calendar,
   Filter
 } from 'lucide-react';
-import { 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
   ResponsiveContainer,
   Legend,
   Cell,
@@ -32,7 +32,7 @@ import { cn, formatCurrency } from '../lib/utils';
 import { BranchKPI } from '../types/database';
 
 export default function BranchDashboard() {
-  const { isDemo } = useAuth();
+  const { } = useAuth();
   const [branches, setBranches] = useState<BranchKPI[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedMonth, setSelectedMonth] = useState(new Date().toISOString().slice(0, 7));
@@ -44,12 +44,6 @@ export default function BranchDashboard() {
   async function fetchBranchData() {
     setLoading(true);
     try {
-      if (isDemo) {
-        const { MOCK_BRANCH_KPI } = await import('../services/mockData');
-        setBranches(MOCK_BRANCH_KPI);
-        setLoading(false);
-        return;
-      }
 
       const { data, error } = await supabase
         .from('branch_kpi')
@@ -66,7 +60,7 @@ export default function BranchDashboard() {
   }
 
   const flagship = branches.find(b => b.branch_name === 'Na Jomtien');
-  
+
   const comparisonData = branches.map(b => ({
     name: b.branch_name,
     aov: b.total_revenue / (b.total_orders || 1),
@@ -90,11 +84,11 @@ export default function BranchDashboard() {
           <h1 className="text-3xl font-serif font-bold text-coffee-900">เปรียบเทียบสาขา</h1>
           <p className="text-coffee-500">วิเคราะห์ประสิทธิภาพรายสาขาและ Flagship Metrics</p>
         </div>
-        
+
         <div className="flex items-center gap-3 bg-white p-2 rounded-2xl shadow-sm border border-coffee-100">
           <Filter className="w-4 h-4 text-coffee-400 ml-2" />
-          <input 
-            type="month" 
+          <input
+            type="month"
             value={selectedMonth}
             onChange={(e) => setSelectedMonth(e.target.value)}
             className="outline-none text-sm font-medium text-coffee-700 bg-transparent"
@@ -109,32 +103,32 @@ export default function BranchDashboard() {
             <MapPin className="w-5 h-5 text-coffee-700" />
             <h2 className="text-xl font-bold text-coffee-900">Flagship Branch: {flagship.branch_name}</h2>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             {[
-              { 
-                label: 'Average Order Value', 
-                value: formatCurrency(flagship.total_revenue / flagship.total_orders), 
-                icon: TrendingUp, 
-                desc: 'ยอดขายเฉลี่ยต่อบิล' 
+              {
+                label: 'Average Order Value',
+                value: formatCurrency(flagship.total_revenue / flagship.total_orders),
+                icon: TrendingUp,
+                desc: 'ยอดขายเฉลี่ยต่อบิล'
               },
-              { 
-                label: 'Peak Turnover Rate', 
-                value: `${((flagship.peak_hour_orders / flagship.peak_hour_capacity) * 100).toFixed(1)}%`, 
-                icon: Users, 
-                desc: 'อัตราหมุนเวียนโต๊ะช่วง Peak' 
+              {
+                label: 'Peak Turnover Rate',
+                value: `${((flagship.peak_hour_orders / flagship.peak_hour_capacity) * 100).toFixed(1)}%`,
+                icon: Users,
+                desc: 'อัตราหมุนเวียนโต๊ะช่วง Peak'
               },
-              { 
-                label: 'Night-time Revenue', 
-                value: `${((flagship.night_revenue / flagship.total_revenue) * 100).toFixed(1)}%`, 
-                icon: Moon, 
-                desc: 'สัดส่วนรายได้ 17:00-23:00' 
+              {
+                label: 'Night-time Revenue',
+                value: `${((flagship.night_revenue / flagship.total_revenue) * 100).toFixed(1)}%`,
+                icon: Moon,
+                desc: 'สัดส่วนรายได้ 17:00-23:00'
               },
-              { 
-                label: 'Rev per Sq. Meter', 
-                value: formatCurrency(flagship.total_revenue / flagship.square_meters), 
-                icon: Maximize, 
-                desc: 'รายได้ต่อตารางเมตร' 
+              {
+                label: 'Rev per Sq. Meter',
+                value: formatCurrency(flagship.total_revenue / flagship.square_meters),
+                icon: Maximize,
+                desc: 'รายได้ต่อตารางเมตร'
               },
             ].map((metric, i) => (
               <motion.div
@@ -173,7 +167,7 @@ export default function BranchDashboard() {
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F3F4F6" />
                 <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#6B7280', fontSize: 12 }} />
                 <YAxis axisLine={false} tickLine={false} tick={{ fill: '#6B7280', fontSize: 12 }} />
-                <Tooltip 
+                <Tooltip
                   cursor={{ fill: '#F9FAFB' }}
                   contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }}
                 />
@@ -233,7 +227,7 @@ export default function BranchDashboard() {
                 <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#F3F4F6" />
                 <XAxis type="number" axisLine={false} tickLine={false} tick={{ fill: '#6B7280', fontSize: 12 }} />
                 <YAxis dataKey="name" type="category" axisLine={false} tickLine={false} tick={{ fill: '#6B7280', fontSize: 12 }} />
-                <Tooltip 
+                <Tooltip
                   cursor={{ fill: '#F9FAFB' }}
                   contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }}
                 />

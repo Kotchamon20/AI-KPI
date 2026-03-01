@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
-import { 
-  Users, 
-  Eye, 
-  MousePointer2, 
-  Ticket, 
-  UserPlus, 
-  Repeat, 
+import {
+  Users,
+  Eye,
+  MousePointer2,
+  Ticket,
+  UserPlus,
+  Repeat,
   Sparkles,
   ArrowDown,
   Filter,
@@ -15,13 +15,13 @@ import {
   TrendingUp,
   Target
 } from 'lucide-react';
-import { 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
   ResponsiveContainer,
   Legend,
   AreaChart,
@@ -34,7 +34,7 @@ import { cn, formatCurrency } from '../lib/utils';
 import { MarketingKPI } from '../types/database';
 
 export default function MarketingFunnelDashboard() {
-  const { isDemo } = useAuth();
+  const { } = useAuth();
   const [funnelData, setFunnelData] = useState<MarketingKPI[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedMonth, setSelectedMonth] = useState(new Date().toISOString().slice(0, 7));
@@ -46,12 +46,6 @@ export default function MarketingFunnelDashboard() {
   async function fetchFunnelData() {
     setLoading(true);
     try {
-      if (isDemo) {
-        const { MOCK_MARKETING } = await import('../services/mockData');
-        setFunnelData(MOCK_MARKETING);
-        setLoading(false);
-        return;
-      }
 
       const { data, error } = await supabase
         .from('marketing_kpi')
@@ -98,11 +92,11 @@ export default function MarketingFunnelDashboard() {
           <h1 className="text-3xl font-serif font-bold text-coffee-900">Marketing Funnel</h1>
           <p className="text-coffee-500">วิเคราะห์ Awareness, Conversion และ Loyalty</p>
         </div>
-        
+
         <div className="flex items-center gap-3 bg-white p-2 rounded-2xl shadow-sm border border-coffee-100">
           <Filter className="w-4 h-4 text-coffee-400 ml-2" />
-          <input 
-            type="month" 
+          <input
+            type="month"
             value={selectedMonth}
             onChange={(e) => setSelectedMonth(e.target.value)}
             className="outline-none text-sm font-medium text-coffee-700 bg-transparent"
@@ -125,7 +119,7 @@ export default function MarketingFunnelDashboard() {
             </div>
             <p className="text-2xl font-bold text-coffee-900">{stage.value.toLocaleString()}</p>
             <p className="text-sm font-medium text-coffee-500">{stage.name}</p>
-            
+
             {i < funnelStages.length - 1 && (
               <div className="hidden md:block absolute -right-3 top-1/2 -translate-y-1/2 z-10">
                 <ArrowDown className="w-6 h-6 text-coffee-200 -rotate-90" />
@@ -147,8 +141,8 @@ export default function MarketingFunnelDashboard() {
               <AreaChart data={funnelData}>
                 <defs>
                   <linearGradient id="colorReach" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.1}/>
-                    <stop offset="95%" stopColor="#3B82F6" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.1} />
+                    <stop offset="95%" stopColor="#3B82F6" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F3F4F6" />
@@ -207,8 +201,8 @@ export default function MarketingFunnelDashboard() {
                 <p className="text-sm font-bold text-coffee-900">{(totals.revenue / (totals.spend || 1)).toFixed(2)}x</p>
               </div>
               <div className="w-full bg-coffee-200 rounded-full h-2">
-                <div 
-                  className="bg-coffee-700 h-2 rounded-full transition-all duration-1000" 
+                <div
+                  className="bg-coffee-700 h-2 rounded-full transition-all duration-1000"
                   style={{ width: `${Math.min((totals.revenue / (totals.spend || 1)) * 10, 100)}%` }}
                 ></div>
               </div>

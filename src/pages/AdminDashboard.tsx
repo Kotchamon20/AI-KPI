@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
-import { 
-  DollarSign, 
-  ShoppingBag, 
-  Users, 
+import {
+  DollarSign,
+  ShoppingBag,
+  Users,
   TrendingUp,
   ArrowUpRight,
   ArrowDownRight
 } from 'lucide-react';
-import { 
-  LineChart, 
-  Line, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
   ResponsiveContainer,
   BarChart,
   Bar,
@@ -28,7 +28,7 @@ import { Sparkles, Loader2 } from 'lucide-react';
 import Markdown from 'react-markdown';
 
 export default function AdminDashboard() {
-  const { isDemo } = useAuth();
+  const { } = useAuth();
   const [stats, setStats] = useState({
     monthlyRevenue: 0,
     totalOrders: 0,
@@ -51,44 +51,6 @@ export default function AdminDashboard() {
       let currentStats = { ...stats };
       let currentCategoryData: any[] = [];
       let currentStaffRanking: any[] = [];
-
-      if (isDemo) {
-        const { MOCK_SALES, MOCK_PRODUCTS, MOCK_STAFF_KPI } = await import('../services/mockData');
-        
-        const totalRev = MOCK_SALES.reduce((acc, curr) => acc + curr.total_sales, 0);
-        const totalOrd = MOCK_SALES.reduce((acc, curr) => acc + curr.total_orders, 0);
-        
-        currentStats = {
-          monthlyRevenue: totalRev,
-          totalOrders: totalOrd,
-          avgBill: Number(calculateAvgBill(totalRev, totalOrd)),
-          roas: 4.5,
-        };
-        setStats(currentStats);
-
-        setChartData(MOCK_SALES.map(d => ({
-          date: new Date(d.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-          revenue: d.total_sales,
-          orders: d.total_orders
-        })));
-
-        const cats: Record<string, number> = {};
-        MOCK_PRODUCTS.forEach(p => {
-          cats[p.category] = (cats[p.category] || 0) + Number(p.revenue);
-        });
-        currentCategoryData = Object.entries(cats).map(([name, value]) => ({ name, value }));
-        setCategoryData(currentCategoryData);
-
-        currentStaffRanking = [
-          { name: 'John Doe', count: 45 },
-          { name: 'Jane Smith', count: 38 },
-          { name: 'Mike Johnson', count: 32 },
-        ];
-        setStaffRanking(currentStaffRanking);
-        
-        setLoading(false);
-        return;
-      }
 
       // Fetch daily sales for the last 30 days
       const thirtyDaysAgo = new Date();
@@ -212,7 +174,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* AI Insights Section */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="glass-card p-6 border-l-4 border-coffee-700"
@@ -223,7 +185,7 @@ export default function AdminDashboard() {
             <h3 className="text-lg font-bold text-coffee-900">ข้อมูลเชิงลึกจาก AI (Gemini)</h3>
           </div>
           {!insights && !loadingInsights && (
-            <button 
+            <button
               onClick={generateAIInsights}
               className="text-xs font-bold text-coffee-700 hover:text-coffee-900 flex items-center gap-1 bg-coffee-50 px-3 py-1.5 rounded-lg border border-coffee-100 transition-colors"
             >
@@ -232,7 +194,7 @@ export default function AdminDashboard() {
             </button>
           )}
           {insights && !loadingInsights && (
-            <button 
+            <button
               onClick={generateAIInsights}
               className="text-xs font-medium text-coffee-400 hover:text-coffee-600"
             >
@@ -240,7 +202,7 @@ export default function AdminDashboard() {
             </button>
           )}
         </div>
-        
+
         {loadingInsights ? (
           <div className="flex items-center gap-3 text-coffee-500 py-4">
             <Loader2 className="w-5 h-5 animate-spin" />
@@ -253,7 +215,7 @@ export default function AdminDashboard() {
         ) : (
           <div className="py-8 text-center">
             <p className="text-coffee-500 italic mb-4">กดปุ่มเพื่อเริ่มการวิเคราะห์ข้อมูลเชิงลึกด้วย AI</p>
-            <button 
+            <button
               onClick={generateAIInsights}
               className="coffee-gradient text-white px-6 py-2 rounded-xl font-semibold shadow-md inline-flex items-center gap-2"
             >
@@ -274,14 +236,14 @@ export default function AdminDashboard() {
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f3f4f6" />
                 <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#6b7280' }} />
                 <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#6b7280' }} />
-                <Tooltip 
+                <Tooltip
                   contentStyle={{ backgroundColor: '#fff', borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
                 />
-                <Line 
-                  type="monotone" 
-                  dataKey="revenue" 
-                  stroke="#8c623f" 
-                  strokeWidth={3} 
+                <Line
+                  type="monotone"
+                  dataKey="revenue"
+                  stroke="#8c623f"
+                  strokeWidth={3}
                   dot={false}
                   activeDot={{ r: 6, strokeWidth: 0 }}
                 />

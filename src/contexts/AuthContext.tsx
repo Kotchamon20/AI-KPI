@@ -7,9 +7,7 @@ interface AuthContextType {
   user: User | null;
   profile: UserProfile | null;
   loading: boolean;
-  isDemo: boolean;
   signOut: () => Promise<void>;
-  enterDemoMode: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -18,20 +16,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
-  const [isDemo, setIsDemo] = useState(false);
-
   useEffect(() => {
-    // Check if we were in demo mode
-    const wasDemo = localStorage.getItem('brewmetrics_demo') === 'true';
-    if (wasDemo) {
-      import('../services/mockData').then(({ MOCK_USER }) => {
-        setProfile(MOCK_USER);
-        setIsDemo(true);
-        setLoading(false);
-      });
-      return;
-    }
-
     if (!isSupabaseConfigured) {
       setLoading(false);
       return;
@@ -78,27 +63,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const signOut = async () => {
-    if (isDemo) {
-      localStorage.removeItem('brewmetrics_demo');
-      setIsDemo(false);
-      setProfile(null);
-      window.location.reload();
-    } else {
-      await supabase.auth.signOut();
-    }
-  };
-
-  const enterDemoMode = () => {
-    import('../services/mockData').then(({ MOCK_USER }) => {
-      localStorage.setItem('brewmetrics_demo', 'true');
-      setProfile(MOCK_USER);
-      setIsDemo(true);
-      setLoading(false);
-    });
+    await supabase.auth.signOut();
   };
 
   return (
-    <AuthContext.Provider value={{ user, profile, loading, isDemo, signOut, enterDemoMode }}>
+    <AuthContext.Provider value={{ user, profile, loading, signOut }}>
       {children}
     </AuthContext.Provider>
   );

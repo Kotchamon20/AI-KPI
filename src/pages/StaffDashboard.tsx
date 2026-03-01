@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
-import { 
-  PlusCircle, 
-  CheckCircle2, 
-  Trophy, 
+import {
+  PlusCircle,
+  CheckCircle2,
+  Trophy,
   Target,
   Star,
   MessageSquare,
@@ -20,7 +20,7 @@ import { analyzeDashboardData } from '../services/gemini';
 import Markdown from 'react-markdown';
 
 export default function StaffDashboard() {
-  const { profile, isDemo } = useAuth();
+  const { profile } = useAuth();
   const [formData, setFormData] = useState({
     upsell_count: 0,
     recommended_menu_count: 0,
@@ -57,27 +57,8 @@ export default function StaffDashboard() {
       let currentStats = { ...personalStats };
       let logs: any[] = [];
 
-      if (isDemo) {
-        const { MOCK_STAFF_KPI } = await import('../services/mockData');
-        const demoData = MOCK_STAFF_KPI[0];
-        currentStats = {
-          totalUpsells: demoData.upsell_count,
-          totalRecommendations: demoData.recommended_menu_count,
-          totalReviews: demoData.review_request_count,
-          totalRecommendationAttempts: demoData.recommendation_count,
-          totalRecommendationSuccess: demoData.recommendation_success_count,
-          totalPromoAttempts: demoData.promo_recommendation_count,
-          totalPromoSuccess: demoData.promo_success_count,
-          totalAddonValue: demoData.addon_sales_value,
-        };
-        setPersonalStats(currentStats);
-        logs = MOCK_STAFF_KPI.slice(0, 5);
-        setRecentLogs(logs);
-        return;
-      }
-
       if (!profile?.id) return;
-      
+
       const { data } = await supabase
         .from('staff_kpi')
         .select('*')
@@ -115,25 +96,6 @@ export default function StaffDashboard() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
-    
-    if (isDemo) {
-      setTimeout(() => {
-        setSuccess(true);
-        setFormData({ 
-          upsell_count: 0, 
-          recommended_menu_count: 0, 
-          review_request_count: 0,
-          recommendation_count: 0,
-          recommendation_success_count: 0,
-          promo_recommendation_count: 0,
-          promo_success_count: 0,
-          addon_sales_value: 0,
-        });
-        setSubmitting(false);
-        setTimeout(() => setSuccess(false), 3000);
-      }, 500);
-      return;
-    }
 
     const { error } = await supabase.from('staff_kpi').insert({
       staff_id: profile?.id,
@@ -143,9 +105,9 @@ export default function StaffDashboard() {
 
     if (!error) {
       setSuccess(true);
-      setFormData({ 
-        upsell_count: 0, 
-        recommended_menu_count: 0, 
+      setFormData({
+        upsell_count: 0,
+        recommended_menu_count: 0,
         review_request_count: 0,
         recommendation_count: 0,
         recommendation_success_count: 0,
@@ -173,8 +135,8 @@ export default function StaffDashboard() {
           </div>
           <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-xl border border-coffee-100 shadow-sm">
             <Calendar className="w-4 h-4 text-coffee-400" />
-            <input 
-              type="month" 
+            <input
+              type="month"
               value={selectedMonth}
               onChange={(e) => setSelectedMonth(e.target.value)}
               className="text-xs font-bold text-coffee-700 outline-none bg-transparent"
@@ -211,23 +173,23 @@ export default function StaffDashboard() {
       {/* Advanced Calculated Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {[
-          { 
-            label: 'Recommendation Rate', 
+          {
+            label: 'Recommendation Rate',
             value: `${((personalStats.totalRecommendationSuccess / (personalStats.totalRecommendationAttempts || 1)) * 100).toFixed(1)}%`,
             sub: `${personalStats.totalRecommendationSuccess}/${personalStats.totalRecommendationAttempts}`,
-            color: 'text-purple-600', bg: 'bg-purple-50' 
+            color: 'text-purple-600', bg: 'bg-purple-50'
           },
-          { 
-            label: 'Promo Conversion', 
+          {
+            label: 'Promo Conversion',
             value: `${((personalStats.totalPromoSuccess / (personalStats.totalPromoAttempts || 1)) * 100).toFixed(1)}%`,
             sub: `${personalStats.totalPromoSuccess}/${personalStats.totalPromoAttempts}`,
-            color: 'text-rose-600', bg: 'bg-rose-50' 
+            color: 'text-rose-600', bg: 'bg-rose-50'
           },
-          { 
-            label: 'Upsell Revenue Impact', 
+          {
+            label: 'Upsell Revenue Impact',
             value: `฿${personalStats.totalAddonValue.toLocaleString()}`,
             sub: 'รายได้เสริมสะสม',
-            color: 'text-emerald-600', bg: 'bg-emerald-50' 
+            color: 'text-emerald-600', bg: 'bg-emerald-50'
           },
         ].map((stat, i) => (
           <motion.div
@@ -250,7 +212,7 @@ export default function StaffDashboard() {
       </div>
 
       {/* AI Coaching Section */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="glass-card p-6 border-l-4 border-coffee-700"
@@ -261,7 +223,7 @@ export default function StaffDashboard() {
             <h3 className="text-lg font-bold text-coffee-900">การโค้ชชิ่งจาก AI (Gemini)</h3>
           </div>
           {!coaching && !loadingCoaching && (
-            <button 
+            <button
               onClick={generateAICoaching}
               className="text-xs font-bold text-coffee-700 hover:text-coffee-900 flex items-center gap-1 bg-coffee-50 px-3 py-1.5 rounded-lg border border-coffee-100 transition-colors"
             >
@@ -270,7 +232,7 @@ export default function StaffDashboard() {
             </button>
           )}
           {coaching && !loadingCoaching && (
-            <button 
+            <button
               onClick={generateAICoaching}
               className="text-xs font-medium text-coffee-400 hover:text-coffee-600"
             >
@@ -278,7 +240,7 @@ export default function StaffDashboard() {
             </button>
           )}
         </div>
-        
+
         {loadingCoaching ? (
           <div className="flex items-center gap-3 text-coffee-500 py-4">
             <Loader2 className="w-5 h-5 animate-spin" />
@@ -291,7 +253,7 @@ export default function StaffDashboard() {
         ) : (
           <div className="py-6 text-center">
             <p className="text-coffee-500 italic mb-4">กดปุ่มเพื่อรับคำแนะนำและเทคนิคการเพิ่มยอดขายจาก AI</p>
-            <button 
+            <button
               onClick={generateAICoaching}
               className="coffee-gradient text-white px-6 py-2 rounded-xl font-semibold shadow-md inline-flex items-center gap-2"
             >
@@ -443,7 +405,7 @@ export default function StaffDashboard() {
           <History className="text-coffee-700 w-6 h-6" />
           <h3 className="text-lg font-bold text-coffee-900">ประวัติการบันทึกล่าสุด</h3>
         </div>
-        
+
         {recentLogs.length > 0 ? (
           <div className="space-y-3">
             {recentLogs.map((log, i) => (

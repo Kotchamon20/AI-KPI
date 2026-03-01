@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
-import { 
-  Megaphone, 
-  Target, 
-  Users, 
+import {
+  Megaphone,
+  Target,
+  Users,
   MousePointer2,
   Plus,
   Sparkles,
@@ -12,13 +12,13 @@ import {
   Calendar,
   DollarSign
 } from 'lucide-react';
-import { 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
   ResponsiveContainer,
   Legend
 } from 'recharts';
@@ -29,7 +29,7 @@ import { analyzeDashboardData } from '../services/gemini';
 import Markdown from 'react-markdown';
 
 export default function MarketingDashboard() {
-  const { isDemo } = useAuth();
+  const { } = useAuth();
   const [campaigns, setCampaigns] = useState<any[]>([]);
   const [stats, setStats] = useState({
     totalSpend: 0,
@@ -59,21 +59,6 @@ export default function MarketingDashboard() {
     try {
       let currentStats = { ...stats };
       let currentCampaigns: any[] = [];
-
-      if (isDemo) {
-        const { MOCK_MARKETING } = await import('../services/mockData');
-        currentCampaigns = MOCK_MARKETING;
-        setCampaigns(currentCampaigns);
-        currentStats = {
-          totalSpend: MOCK_MARKETING.reduce((acc, curr) => acc + curr.ad_spend, 0),
-          totalRevenue: MOCK_MARKETING.reduce((acc, curr) => acc + curr.revenue_generated, 0),
-          totalLeads: MOCK_MARKETING.reduce((acc, curr) => acc + curr.leads, 0),
-          totalEngagement: MOCK_MARKETING.reduce((acc, curr) => acc + curr.engagement, 0),
-        };
-        setStats(currentStats);
-        setLoading(false);
-        return;
-      }
 
       const { data } = await supabase
         .from('marketing_kpi')
@@ -109,25 +94,6 @@ export default function MarketingDashboard() {
     e.preventDefault();
     setSubmitting(true);
 
-    if (isDemo) {
-      const newCampaign = {
-        id: Math.random().toString(36).substr(2, 9),
-        ...formData
-      };
-      setCampaigns([newCampaign, ...campaigns]);
-      setIsModalOpen(false);
-      setSubmitting(false);
-      setFormData({
-        campaign_name: '',
-        date: new Date().toISOString().split('T')[0],
-        ad_spend: 0,
-        revenue_generated: 0,
-        leads: 0,
-        engagement: 0,
-      });
-      return;
-    }
-
     const { error } = await supabase.from('marketing_kpi').insert(formData);
     if (!error) {
       fetchMarketingData();
@@ -160,7 +126,7 @@ export default function MarketingDashboard() {
           <h1 className="text-3xl font-serif font-bold text-coffee-900">ประสิทธิภาพการตลาด</h1>
           <p className="text-coffee-500">การวิเคราะห์แคมเปญและการติดตาม ROAS</p>
         </div>
-        <button 
+        <button
           onClick={() => setIsModalOpen(true)}
           className="coffee-gradient text-white px-6 py-2 rounded-xl font-semibold shadow-md flex items-center gap-2"
         >
@@ -297,7 +263,7 @@ export default function MarketingDashboard() {
       </div>
 
       {/* AI Insights Section */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="glass-card p-6 border-l-4 border-coffee-700"
@@ -308,7 +274,7 @@ export default function MarketingDashboard() {
             <h3 className="text-lg font-bold text-coffee-900">ข้อมูลเชิงลึกจาก AI (Gemini)</h3>
           </div>
           {!insights && !loadingInsights && (
-            <button 
+            <button
               onClick={generateAIInsights}
               className="text-xs font-bold text-coffee-700 hover:text-coffee-900 flex items-center gap-1 bg-coffee-50 px-3 py-1.5 rounded-lg border border-coffee-100 transition-colors"
             >
@@ -317,7 +283,7 @@ export default function MarketingDashboard() {
             </button>
           )}
           {insights && !loadingInsights && (
-            <button 
+            <button
               onClick={generateAIInsights}
               className="text-xs font-medium text-coffee-400 hover:text-coffee-600"
             >
@@ -325,7 +291,7 @@ export default function MarketingDashboard() {
             </button>
           )}
         </div>
-        
+
         {loadingInsights ? (
           <div className="flex items-center gap-3 text-coffee-500 py-4">
             <Loader2 className="w-5 h-5 animate-spin" />
@@ -338,7 +304,7 @@ export default function MarketingDashboard() {
         ) : (
           <div className="py-6 text-center">
             <p className="text-coffee-500 italic mb-4">กดปุ่มเพื่อเริ่มการวิเคราะห์ประสิทธิภาพการตลาดด้วย AI</p>
-            <button 
+            <button
               onClick={generateAIInsights}
               className="coffee-gradient text-white px-6 py-2 rounded-xl font-semibold shadow-md inline-flex items-center gap-2"
             >
@@ -358,7 +324,7 @@ export default function MarketingDashboard() {
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f3f4f6" />
               <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#6b7280' }} />
               <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#6b7280' }} />
-              <Tooltip 
+              <Tooltip
                 contentStyle={{ backgroundColor: '#fff', borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
               />
               <Legend />
